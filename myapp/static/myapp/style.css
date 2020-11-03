@@ -1,0 +1,28 @@
+@keyframes rainbow {
+    0%   {background-color: red; color: orange}
+    15%{background-color: orange; color: yellow}
+    30%  {background-color: yellow; color: green}
+    45%{background-color: green; color: blue}
+    60%  {background-color: blue; color: aqua}
+    75%{background-color: aqua;  color: purple}
+    90%{background-color: purple; color: red}
+    100%{background-color: red; color: white}
+}
+
+h1 {
+    background-color: aqua;
+    color: #5E5694;
+    font-size: 36px;
+    text-align: center;
+    position: center;
+    font-style: italic;
+    font-family: "Segoe UI";
+    animation-name: rainbow;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+}
+
+.hbar1 {
+    display: inline;
+    margin: 15px;
+}

@@ -1,0 +1,11 @@
+{% extends 'myapp/base.html' %}
+
+{% block body_block %}
+    <p>{{ topic_name }}</p>
+    <p>{{ topic_length }}</p>
+    <ol>
+        {% for course in courses %}
+            <li> {{ course.title }} </li>
+        {% endfor %}
+    </ol>
+{% endblock %}

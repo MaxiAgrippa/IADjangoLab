@@ -6,11 +6,11 @@ from .models import Topic, Course, Student, Order
 # Create your views here.
 def index(request):
     top_list = Topic.objects.all().order_by('id')[:10]
-    return render(request, 'myapp/index0.html', {'top_list': top_list})
+    return render(request, 'myapp/index.html', {'top_list': top_list})
 
 
 def about(request):
-    return render(request, 'myapp/about0.html')
+    return render(request, 'myapp/about.html')
 
 
 def detail(request, topic_id):
@@ -18,5 +18,5 @@ def detail(request, topic_id):
     courses = Course.objects.filter(topic=topic_id)
     topic_name = topic_local.name.upper()
     topic_length = str(topic_local.length) + ' weeks'
-    return render(request, 'myapp/detail0.html',
+    return render(request, 'myapp/detail.html',
                   {'topic_name': topic_name, 'topic_length': topic_length, 'courses': courses})
