@@ -1,12 +1,12 @@
 @keyframes rainbow {
-    0%   {background-color: red; color: orange}
-    15%{background-color: orange; color: yellow}
-    30%  {background-color: yellow; color: green}
-    45%{background-color: green; color: blue}
-    60%  {background-color: blue; color: aqua}
-    75%{background-color: aqua;  color: purple}
-    90%{background-color: purple; color: red}
-    100%{background-color: red; color: white}
+    0%   {background-color: red; color: orange; font-size: 100px; text-align: center;}
+    15%{background-color: orange; color: yellow; font-size: 115px; text-align: left;}
+    30%  {background-color: yellow; color: green; font-size: 130px; text-align: center;}
+    45%{background-color: green; color: blue; font-size: 115px; text-align: right;}
+    60%  {background-color: blue; color: aqua; font-size: 100px; text-align: center;}
+    75%{background-color: aqua;  color: purple; font-size: 115px; text-align: left;}
+    90%{background-color: purple; color: red; font-size: 130px; text-align: center;}
+    100%{background-color: red; color: white; font-size: 115px; text-align: right;}
 }
 
 h1 {
@@ -18,7 +18,7 @@ h1 {
     font-style: italic;
     font-family: "Segoe UI";
     animation-name: rainbow;
-    animation-duration: 4s;
+    animation-duration: 3s;
     animation-iteration-count: infinite;
 }
 
