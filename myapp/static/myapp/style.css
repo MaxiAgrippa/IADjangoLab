@@ -1,14 +1,27 @@
 @keyframes rainbow {
     0%   {background-color: red; color: orange; font-size: 100px; text-align: center;}
-    15%{background-color: orange; color: yellow; font-size: 115px; text-align: left;}
-    30%  {background-color: yellow; color: green; font-size: 130px; text-align: center;}
-    45%{background-color: green; color: blue; font-size: 115px; text-align: right;}
+    15%{background-color: orange; color: yellow; font-size: 100px; text-align: left;}
+    30%  {background-color: yellow; color: green; font-size: 100px; text-align: center;}
+    45%{background-color: green; color: blue; font-size: 100px; text-align: right;}
     60%  {background-color: blue; color: aqua; font-size: 100px; text-align: center;}
-    75%{background-color: aqua;  color: purple; font-size: 115px; text-align: left;}
-    90%{background-color: purple; color: red; font-size: 130px; text-align: center;}
-    100%{background-color: red; color: white; font-size: 115px; text-align: right;}
+    75%{background-color: aqua;  color: purple; font-size: 100px; text-align: left;}
+    90%{background-color: purple; color: red; font-size: 100px; text-align: center;}
+    100%{background-color: red; color: white; font-size: 100px; text-align: right;}
 }
+@keyframes text_shadow {
+    0%  {text-shadow: 1px 2px yellow}
+    10%  {text-shadow: -3px 4px green}
+    20%  {text-shadow: 5px 6px blue}
+    30%  {text-shadow: -7px -8px aqua}
+    40%  {text-shadow: 9px 10px purple}
+    50%  {text-shadow: -10px 9px black}
+    60%  {text-shadow: 8px 7px white}
+    70%  {text-shadow: -6px -5px black}
+    80%  {text-shadow: 4px 3px red}
+    90%  {text-shadow: -2px 1px orange}
+    100% {text-shadow: 1px 2px yellow}
 
+}
 h1 {
     background-color: aqua;
     color: #5E5694;
@@ -19,6 +32,12 @@ h1 {
     font-family: "Segoe UI";
     animation-name: rainbow;
     animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+li {
+    animation-name: text_shadow;
+    animation-duration: 1s;
     animation-iteration-count: infinite;
 }
 
