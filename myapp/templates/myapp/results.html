@@ -5,10 +5,16 @@
 {% block body_block %}
     <h2>List of Courses</h2>
     <ol>
-    {% for course in courselist %}
-    <li>
-        {{ course }}
-    </li>
-    {% endfor %}
+        {% for topic, courses in course_list %}
+            <h2>
+                Category: {{ topic }}
+            </h2>
+            {% for course in courses %}
+                <li>
+                    {{ course }}
+                </li>
+            {% endfor %}
+        {% endfor %}
+
     </ol>
 {% endblock %}

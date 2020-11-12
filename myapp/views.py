@@ -7,7 +7,8 @@ from .forms import SearchForm
 # Create your views here.
 def index(request):
     top_list = Topic.objects.all().order_by('id')[:10]
-    return render(request, 'myapp/index.html', {'top_list': top_list})
+    student_name = request.user.get_username()
+    return render(request, 'myapp/index.html', {'top_list': top_list, 'student_name': student_name})
 
 
 def about(request):
@@ -31,17 +32,24 @@ def findcourses(request):
             name = form.cleaned_data['name']
             length = form.cleaned_data['length']
             max_price = form.cleaned_data['max_price']
-            if length is not None:
+            if length != 0:
                 topics = Topic.objects.filter(length=length)
-                courselist = []
+                course_list = []
+                topic_list = []
                 for top in topics:
-                    courselist = courselist + list(top.courses.filter(price__lt=max_price))
-                return render(request, 'myapp/results.html', {'courselist': courselist, 'name': name, 'length': length})
+                    if top.courses.filter(price__lte=max_price).count() != 0:
+                        course_list.append((top, list(top.courses.filter(price__lte=max_price))))
+                return render(request, 'myapp/results.html',
+                              {'course_list': course_list, 'name': name, 'length': length, 'topic_list': topic_list})
             else:
-                courselist = []
-                courses = Course.objects.filter(price__lt=max_price)
-                courselist += list(courses)
-                return render(request, 'myapp/results.html', {'courselist': courselist, 'name': name, 'length': length})
+                topics = Topic.objects.all()
+                course_list = []
+                topics.distinct('name')
+                for top in topics:
+                    if top.courses.filter(price__lte=max_price).count() != 0:
+                        course_list.append((top, list(top.courses.filter(price__lte=max_price))))
+                return render(request, 'myapp/results.html',
+                              {'course_list': course_list, 'name': name, 'length': length})
         else:
             return HttpResponse('Invalid data')
     else:
