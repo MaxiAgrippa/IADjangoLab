@@ -53,11 +53,12 @@ class Order(models.Model):
     order_date = models.DateField(default=timezone.now)
 
     def __str__(self):
-        courses_str = ''
-        for course in self.courses.all():
-            courses_str += course.title + ' '
-        order_status_local = self.ORDER_STATE[self.order_status][1]
-        return self.student.first_name + ' ' + self.student.last_name + ' ' + courses_str + order_status_local
+        # courses_str = ''
+        # for course in self.courses.all():
+        #     courses_str += course.title + ' '
+        # order_status_local = self.ORDER_STATE[self.order_status][1]
+        # return self.student.first_name + ' ' + self.student.last_name + ' ' + courses_str + order_status_local
+        return str(self.id)
 
     def total_cost(self):
         courses = self.courses.all()

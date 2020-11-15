@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .models import Topic, Course, Student, Order
-from .forms import SearchForm
+from .forms import *
 
 
 # Create your views here.
@@ -55,3 +55,24 @@ def findcourses(request):
     else:
         form = SearchForm()
         return render(request, 'myapp/findcourses.html', {'form': form})
+
+
+def place_order(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            courses = form.cleaned_data['courses']
+            order = form.save(commit=False)
+            student = order.student
+            status = order.order_status
+            order.save()
+            if status == 1:
+                for c in order.courses.all():
+                    student.registered_courses.add(c)
+            return render(request, 'myapp/order_response.html', {'courses': courses, 'order': order})
+        else:
+            return render(request, 'myapp/place_order.html', {'form': form})
+
+    else:
+        form = OrderForm()
+        return render(request, 'myapp/place_order.html', {'form': form})
