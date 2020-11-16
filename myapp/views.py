@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from .models import Topic, Course, Student, Order
 from .forms import *
 
+from django.http import HttpResponse
+
 
 # Create your views here.
 def index(request):
@@ -12,16 +14,18 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'myapp/about.html')
+    student_name = request.user.get_username()
+    return render(request, 'myapp/about.html', {'student_name': student_name})
 
 
 def detail(request, topic_id):
+    student_name = request.user.get_username()
     topic_local = get_object_or_404(Topic, pk=topic_id)
     courses = Course.objects.filter(topic=topic_id)
     topic_name = topic_local.name.upper()
     topic_length = str(topic_local.length) + ' weeks'
     return render(request, 'myapp/detail.html',
-                  {'topic_name': topic_name, 'topic_length': topic_length, 'courses': courses})
+                  {'topic_name': topic_name, 'topic_length': topic_length, 'courses': courses, 'student_name': student_name})
 
 
 def findcourses(request):
@@ -54,7 +58,8 @@ def findcourses(request):
             return HttpResponse('Invalid data')
     else:
         form = SearchForm()
-        return render(request, 'myapp/findcourses.html', {'form': form})
+        student_name = request.user.get_username()
+        return render(request, 'myapp/findcourses.html', {'form': form, 'student_name': student_name})
 
 
 def place_order(request):
