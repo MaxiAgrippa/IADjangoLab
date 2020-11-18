@@ -1,5 +1,5 @@
 from django import forms
-from myapp.models import Order
+from myapp.models import Order, Review
 
 
 class SearchForm(forms.Form):
@@ -21,3 +21,11 @@ class OrderForm(forms.ModelForm):
         fields = ['courses', 'student', 'order_status']
         widgets = {'courses': forms.CheckboxSelectMultiple(), 'order_type': forms.RadioSelect}
         labels = {'student': u'Student Name', }
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = {'reviewer', 'course', 'rating', 'comments'}
+        widgets = {'courses': forms.RadioSelect()}
+        labels = {'reviewer': u'Please enter a valid email', 'rating': u'Rating: An integer between 1 (worst) and 5 (best)'}

@@ -21,6 +21,7 @@ class Course(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     for_everyone = models.BooleanField(default=True)
     optional = models.TextField(default='')
+    num_reviews = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -53,12 +54,11 @@ class Order(models.Model):
     order_date = models.DateField(default=timezone.now)
 
     def __str__(self):
-        # courses_str = ''
-        # for course in self.courses.all():
-        #     courses_str += course.title + ' '
-        # order_status_local = self.ORDER_STATE[self.order_status][1]
-        # return self.student.first_name + ' ' + self.student.last_name + ' ' + courses_str + order_status_local
-        return str(self.id)
+        courses_str = ''
+        for course in self.courses.all():
+            courses_str += course.title + ' '
+        order_status_local = self.ORDER_STATE[self.order_status][1]
+        return self.student.first_name + ' ' + self.student.last_name + ' ' + courses_str + order_status_local
 
     def total_cost(self):
         courses = self.courses.all()
@@ -67,3 +67,14 @@ class Order(models.Model):
             total_price += course.price
         print(total_price)
         return total_price
+
+class Review(models.Model):
+    reviewer = models.EmailField()
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField()
+    comments = models.TextField(blank=True)
+    date = models.DateField(default=timezone.now)
+
+    def __str__(self):
+        return self.reviewer + ' ' + self.course.title + ' ' + str(self.rating) + ' ' + self.comments + ' ' + str(self.date)
+
