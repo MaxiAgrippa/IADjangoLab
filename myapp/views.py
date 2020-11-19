@@ -2,20 +2,36 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .models import Topic, Course, Student, Order, Review
 from .forms import *
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.urls import reverse
+from datetime import datetime
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 # Create your views here.
 def index(request):
-    top_list = Topic.objects.all().order_by('id')[:10]
-    student_name = request.user.get_username()
-    return render(request, 'myapp/index.html', {'top_list': top_list, 'student_name': student_name})
-
+    if request.session.get('last_login'):
+        top_list = Topic.objects.all().order_by('id')[:10]
+        student_name = request.user.get_username()
+        return render(request, 'myapp/index.html', {'top_list': top_list, 'student_name': student_name})
+    else:
+        http_response = HttpResponse()
+        http_response.write('<html> Your last login was more than one hour ago. </html>')
+        return http_response
 
 def about(request):
     student_name = request.user.get_username()
-    return render(request, 'myapp/about.html', {'student_name': student_name})
+    if request.session.get('about_visits'):
+        request.session['about_visits'] += 1
+        request.session.set_expiry(300)
+        about_visits = request.session['about_visits']
+    else:
+        request.session['about_visits'] = 1
+        request.session.set_expiry(300)
+        about_visits = request.session['about_visits']
+    return render(request, 'myapp/about.html', {'student_name': student_name, 'about_visits': about_visits})
 
 
 def detail(request, topic_id):
@@ -106,9 +122,52 @@ def review(request):
         else:
             form = ReviewForm()
             return render(request, 'myapp/review.html', {'form': form, 'student_name': student_name})
-
-
-
     else:
         form = ReviewForm()
         return render(request, 'myapp/review.html', {'form': form, 'student_name': student_name})
+
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                request.session['last_login'] = str(datetime.today()) + str(datetime.now())
+                request.session.set_expiry(3600)
+                return HttpResponseRedirect(reverse('myapp:index'))
+            else:
+                return HttpResponse('Your account is disabled.')
+        else:
+            return HttpResponse('Invalid login details.')
+    else:
+        return render(request, 'myapp/login.html')
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse(('myapp:index')))
+
+
+@login_required
+def myaccount(request):
+    user_name = request.user.get_username()
+    student = Student.objects.filter(username=user_name)
+    if student:
+        firstname = student.first_name
+        lastname = student.last_name
+        interested_in = student.interested_in
+        registered_courses = student.registered_courses
+        topic_list = []
+        for topic in interested_in:
+            topic_list.append(topic)
+        course_list = []
+        for course in registered_courses:
+            course_list.append(course)
+        return render(request, 'myapp/myaccount.html',
+                      {'firstname': firstname, 'lastname': lastname, 'topic_list': topic_list, 'course_list': course_list})
+    else:
+        return render(request, 'myapp/myaccount.html', {'message': 'You are not a registered student!'})

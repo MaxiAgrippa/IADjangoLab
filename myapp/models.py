@@ -68,6 +68,15 @@ class Order(models.Model):
         print(total_price)
         return total_price
 
+    def total_items(self):
+        courses = self.courses.all()
+        total_num=0
+        for course in courses:
+            total_num+=1
+        return str(total_num)
+
+
+
 class Review(models.Model):
     reviewer = models.EmailField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -76,5 +85,5 @@ class Review(models.Model):
     date = models.DateField(default=timezone.now)
 
     def __str__(self):
-        return self.reviewer + ' ' + self.course.title + ' ' + str(self.rating) + ' ' + self.comments + ' ' + str(self.date)
-
+        return self.reviewer + ' ' + self.course.title + ' ' + str(self.rating) + ' ' + self.comments + ' ' + str(
+            self.date)

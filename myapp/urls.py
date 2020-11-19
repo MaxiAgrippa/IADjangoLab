@@ -8,5 +8,7 @@ urlpatterns = [path(r'', views.index, name='index'),
                path(r'<int:topic_id>/', views.detail, name='detail'),
                path(r'findcourses/', views.findcourses, name='findcourses'),
                path(r'place_order/', views.place_order, name='place_order'),
-               path(r'review/',views.review,name='review')
+               path(r'review/', views.review, name='review'),
+               path(r'login/', views.user_login, name='user_login'),
+               path(r'myaccount/', views.myaccount, name='myaccount')
                ]
