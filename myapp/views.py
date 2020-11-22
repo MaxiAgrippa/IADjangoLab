@@ -21,6 +21,7 @@ def index(request):
         http_response.write('<html> Your last login was more than one hour ago. </html>')
         return http_response
 
+
 def about(request):
     student_name = request.user.get_username()
     if request.session.get('about_visits'):
@@ -171,3 +172,35 @@ def myaccount(request):
                       {'firstname': firstname, 'lastname': lastname, 'topic_list': topic_list, 'course_list': course_list})
     else:
         return render(request, 'myapp/myaccount.html', {'message': 'You are not a registered student!'})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = StudentRegisterForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+            interested_in = form.cleaned_data['interested_in']
+            level = form.cleaned_data['level']
+            address = form.cleaned_data['address']
+            province = form.cleaned_data['province']
+            registered_courses = form.cleaned_data['registered_courses']
+            form.save()
+            user = authenticate(username=username, password=password)
+            if user:
+                if user.is_active:
+                    login(request, user)
+                    request.session['last_login'] = str(datetime.today()) + str(datetime.now())
+                    request.session.set_expiry(3600)
+                    return HttpResponseRedirect(reverse('myapp:index'))
+                else:
+                    return HttpResponse('Your account is disabled.')
+            else:
+                return HttpResponse('Invalid login details.')
+        else:
+            form = StudentRegisterForm()
+            return render(request, 'myapp/register.html', {'form': form})
+    else:
+        form = StudentRegisterForm()
+        return render(request, 'myapp/register.html', {'form': form})

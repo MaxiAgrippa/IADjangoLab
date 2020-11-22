@@ -10,5 +10,6 @@ urlpatterns = [path(r'', views.index, name='index'),
                path(r'place_order/', views.place_order, name='place_order'),
                path(r'review/', views.review, name='review'),
                path(r'login/', views.user_login, name='user_login'),
-               path(r'myaccount/', views.myaccount, name='myaccount')
+               path(r'myaccount/', views.myaccount, name='myaccount'),
+               path(r'register/', views.register, name='register')
                ]

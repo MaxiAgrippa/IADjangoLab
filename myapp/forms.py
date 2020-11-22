@@ -1,5 +1,5 @@
 from django import forms
-from myapp.models import Order, Review
+from myapp.models import Order, Review, Student, Course
 
 
 class SearchForm(forms.Form):
@@ -29,3 +29,21 @@ class ReviewForm(forms.ModelForm):
         fields = {'reviewer', 'course', 'rating', 'comments'}
         widgets = {'courses': forms.RadioSelect()}
         labels = {'reviewer': u'Please enter a valid email', 'rating': u'Rating: An integer between 1 (worst) and 5 (best)'}
+
+
+class StudentRegisterForm(forms.ModelForm):
+    class Meta:
+        LVL_CHOICES = [('HS', 'High School'), ('UG', 'Undergraduate'), ('PG', 'Postgraduate'), ('ND', 'No Degree')]
+        model = Student
+        fields = {'username', 'email', 'password', 'interested_in', 'first_name', 'last_name'}
+        # widgets = {'level': forms.TypedChoiceField(widget=forms.RadioSelect, choices=LVL_CHOICES, empty_value='HS'),
+        #            'address': forms.CharField(max_length=300, required=False),
+        #            'province': forms.CharField(max_length=2, empty_value='ON'),
+        #            'registered_courses': forms.ModelMultipleChoiceField(required=False, queryset=Course.objects.all())}
+
+    LVL_CHOICES = [('HS', 'High School'), ('UG', 'Undergraduate'), ('PG', 'Postgraduate'), ('ND', 'No Degree')]
+    level = forms.TypedChoiceField(label='Level', widget=forms.RadioSelect, choices=LVL_CHOICES, empty_value='HS')
+    address = forms.CharField(label='Address', max_length=300, required=False)
+    province = forms.CharField(label='Province', max_length=2, empty_value='ON')
+    registered_courses = forms.ModelMultipleChoiceField(label='Registered Courses', required=False,
+                                                        queryset=Course.objects.all())
