@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from .models import Topic, Course, Student, Order, Review
+from .models import Topic, Course, Student, Order, Review, User
 from .forms import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -187,6 +187,10 @@ def register(request):
             province = form.cleaned_data['province']
             registered_courses = form.cleaned_data['registered_courses']
             form.save()
+            user = User.objects.get(username=username)
+            user.set_password(password)
+            user.save()
+            print(password)
             user = authenticate(username=username, password=password)
             if user:
                 if user.is_active:

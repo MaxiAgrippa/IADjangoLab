@@ -36,10 +36,10 @@ class StudentRegisterForm(forms.ModelForm):
         LVL_CHOICES = [('HS', 'High School'), ('UG', 'Undergraduate'), ('PG', 'Postgraduate'), ('ND', 'No Degree')]
         model = Student
         fields = {'username', 'email', 'password', 'interested_in', 'first_name', 'last_name'}
-        # widgets = {'level': forms.TypedChoiceField(widget=forms.RadioSelect, choices=LVL_CHOICES, empty_value='HS'),
-        #            'address': forms.CharField(max_length=300, required=False),
-        #            'province': forms.CharField(max_length=2, empty_value='ON'),
-        #            'registered_courses': forms.ModelMultipleChoiceField(required=False, queryset=Course.objects.all())}
+        widgets = {'level': forms.TypedChoiceField(widget=forms.RadioSelect, choices=LVL_CHOICES, empty_value='HS'),
+                   'address': forms.CharField(max_length=300, required=False),
+                   'province': forms.CharField(max_length=2, empty_value='ON'),
+                   'registered_courses': forms.ModelMultipleChoiceField(required=False, queryset=Course.objects.all())}
 
     LVL_CHOICES = [('HS', 'High School'), ('UG', 'Undergraduate'), ('PG', 'Postgraduate'), ('ND', 'No Degree')]
     level = forms.TypedChoiceField(label='Level', widget=forms.RadioSelect, choices=LVL_CHOICES, empty_value='HS')
@@ -47,3 +47,4 @@ class StudentRegisterForm(forms.ModelForm):
     province = forms.CharField(label='Province', max_length=2, empty_value='ON')
     registered_courses = forms.ModelMultipleChoiceField(label='Registered Courses', required=False,
                                                         queryset=Course.objects.all())
+    field_order = ['username', 'email', 'password','interested_in', 'first_name', 'last_name','level', 'address','province','registered_courses']
