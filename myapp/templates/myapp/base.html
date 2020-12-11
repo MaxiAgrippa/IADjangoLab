@@ -19,6 +19,15 @@
         <li class="hbar1"><a href="{% url 'myapp:findcourses' %}">Search of a course</a></li>
         <li class="hbar1"><a href="{% url 'myapp:place_order' %}">Place an order</a></li>
         <li class="hbar1"><a href="{% url 'myapp:review' %}">Review</a><br/></li>
+        
+        {% if student_name %}
+            <li class="hbar1"><a href="{% url 'myapp:myorder' %}">My Order</a><br/></li>
+            <li class="hbar1"><a href="{% url 'myapp:myaccount' %}">My Account</a><br/></li>
+            <li class="hbar1"><a href="{% url 'myapp:user_logout' %}">Logout</a><br/></li>
+        {% else %}
+        <li class="hbar1"><a href="{% url 'myapp:register' %}">Register</a><br/></li>
+        <li class="hbar1"><a href="{% url 'myapp:user_login' %}">Login</a><br/></li>
+        {% endif %}
     </ul>
 </div>
 </body>

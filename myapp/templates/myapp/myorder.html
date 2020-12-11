@@ -1,0 +1,24 @@
+{% extends 'myapp/base.html' %}
+
+{% block myhdg %}Hello {{ first_name }} {{last_name}} {% endblock %}
+{% block body_block %}
+{% if orders %}   
+    <h2>List of Order</h2>
+        <ol>
+            {% for order in orders %}
+                <h3>
+                    Course: {{ order.total_items}}
+                </h3>
+                <h3>
+                    Order Status: {% if order.order_status == 0 %} Cancelled {% elif order.order_status == 1 %} Confirmed {% elif order.order_status == 2 %} On Hold {% else %} Invalid Status {% endif %}
+                </h3>
+                <h3>
+                    Order Date: {{ order.order_date }}
+                </h3>
+                
+            {% endfor %}
+        </ol>
+{% else %}
+    <h2> No Order found.</h2>
+{% endif %}
+{% endblock %}

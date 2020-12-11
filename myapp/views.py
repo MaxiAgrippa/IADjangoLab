@@ -1,3 +1,4 @@
+from django.core.checks import messages
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .models import Topic, Course, Student, Order, Review, User
@@ -99,7 +100,6 @@ def place_order(request):
         form = OrderForm()
         return render(request, 'myapp/place_order.html', {'form': form, 'student_name': student_name})
 
-
 def review(request):
     student_name = request.user.get_username()
     if request.method == 'POST':
@@ -138,41 +138,70 @@ def user_login(request):
                 login(request, user)
                 request.session['last_login'] = str(datetime.today()) + str(datetime.now())
                 request.session.set_expiry(3600)
-                return HttpResponseRedirect(reverse('myapp:index'))
+                return HttpResponseRedirect(reverse('myapp:myaccount'))
             else:
                 return HttpResponse('Your account is disabled.')
         else:
-            return HttpResponse('Invalid login details.')
+            return render(request, 'myapp/error.html', {'msg':"Invalid Login detail."})
     else:
+        try:
+            logout(request,request.user)
+        except:
+            return render(request, 'myapp/login.html')
         return render(request, 'myapp/login.html')
 
 
 @login_required
 def user_logout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse(('myapp:index')))
+    try:
+        logout(request)
+        return render(request, 'myapp/logout.html',{'message':"Logout Successful."})
+    except:
+        return render(request,'myapp/logout.html',{'message': "Not Logged in."})
 
 
 @login_required
 def myaccount(request):
     user_name = request.user.get_username()
-    student = Student.objects.filter(username=user_name)
+    student = Student.objects.get(username=user_name)
     if student:
         firstname = student.first_name
         lastname = student.last_name
+        name = firstname + " " + lastname
         interested_in = student.interested_in
         registered_courses = student.registered_courses
         topic_list = []
-        for topic in interested_in:
-            topic_list.append(topic)
+        topic_list.append(type(interested_in))
+        topic_list.append(interested_in)
+        # for topic in interested_in:
+        #     topic_list.append(topic)
         course_list = []
-        for course in registered_courses:
-            course_list.append(course)
+        course_list.append(type(registered_courses))
+        course_list.append(registered_courses)
+        # for course in registered_courses:
+        #     course_list.append(course)
         return render(request, 'myapp/myaccount.html',
-                      {'firstname': firstname, 'lastname': lastname, 'topic_list': topic_list, 'course_list': course_list})
+                      {'student_name': name, 'firstname': firstname, 'lastname': lastname, 'topic_list': topic_list, 'course_list': course_list})
     else:
         return render(request, 'myapp/myaccount.html', {'message': 'You are not a registered student!'})
 
+@login_required
+def myorder(request):
+    user_name = request.user.get_username()
+    try:
+        st = Student.objects.get(username=user_name)
+        firstname = st.first_name 
+        lastname = st.last_name
+        if st:
+            orders = Order.objects.filter(student = st.id)
+            if orders:
+                return render(request, 'myapp/myorder.html', {'first_name': firstname, 'last_name': lastname , 'orders': orders})
+            else:
+                return render(request, 'myapp/myorder.html', {'first_name': firstname, 'last_name': lastname , 'orders': None})
+        else:
+            return render(request, 'myapp/error.html', {'msg': "You  are  not a  registered student!’"})
+    except:
+        return render(request, 'myapp/error.html', {'msg': "You  are  not a  registered student!"})
 
 def register(request):
     if request.method == 'POST':
