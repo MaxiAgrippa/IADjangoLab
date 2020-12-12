@@ -205,7 +205,7 @@ def myorder(request):
 
 def register(request):
     if request.method == 'POST':
-        form = StudentRegisterForm(request.POST)
+        form = StudentRegisterForm(request.POST,request.FILES)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -215,11 +215,13 @@ def register(request):
             address = form.cleaned_data['address']
             province = form.cleaned_data['province']
             registered_courses = form.cleaned_data['registered_courses']
+            print (request.FILES)
+            
+            form.photo = request.FILES['photo']
             form.save()
             user = User.objects.get(username=username)
             user.set_password(password)
             user.save()
-            print(password)
             user = authenticate(username=username, password=password)
             if user:
                 if user.is_active:

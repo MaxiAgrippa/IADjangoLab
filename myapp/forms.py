@@ -1,4 +1,5 @@
 from django import forms
+from datetime import datetime
 from myapp.models import Order, Review, Student, Course
 
 
@@ -35,7 +36,7 @@ class StudentRegisterForm(forms.ModelForm):
     class Meta:
         LVL_CHOICES = [('HS', 'High School'), ('UG', 'Undergraduate'), ('PG', 'Postgraduate'), ('ND', 'No Degree')]
         model = Student
-        fields = {'username', 'email', 'password', 'interested_in', 'first_name', 'last_name'}
+        fields = {'username', 'email', 'password', 'interested_in', 'first_name', 'last_name','photo'}
         widgets = {'level': forms.TypedChoiceField(widget=forms.RadioSelect, choices=LVL_CHOICES, empty_value='HS'),
                    'address': forms.CharField(max_length=300, required=False),
                    'province': forms.CharField(max_length=2, empty_value='ON'),
@@ -47,4 +48,8 @@ class StudentRegisterForm(forms.ModelForm):
     province = forms.CharField(label='Province', max_length=2, empty_value='ON')
     registered_courses = forms.ModelMultipleChoiceField(label='Registered Courses', required=False,
                                                         queryset=Course.objects.all())
-    field_order = ['username', 'email', 'password','interested_in', 'first_name', 'last_name','level', 'address','province','registered_courses']
+    #photo = forms.ImageField(label='Profile Image', required= False)
+    
+    #fields =  ['username', 'email', 'password','interested_in', 'first_name', 'last_name','level', 'address','province','registered_courses','photo']
+
+    field_order = ['username', 'email', 'password','interested_in', 'first_name', 'last_name','level', 'address','province','registered_courses','photo']
