@@ -7,20 +7,33 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from datetime import datetime
-
+from django.views import View
 from django.http import HttpResponse, HttpResponseRedirect
 
 
 # Create your views here.
-def index(request):
-    if request.session.get('last_login'):
-        top_list = Topic.objects.all().order_by('id')[:10]
-        student_name = request.user.get_username()
-        return render(request, 'myapp/index.html', {'top_list': top_list, 'student_name': student_name})
-    else:
-        http_response = HttpResponse()
-        http_response.write('<html> Your last login was more than one hour ago. </html>')
-        return http_response
+class Index(View):
+     def get(self, request, *args, **kwargs):
+        if request.session.get('last_login'):
+            self.top_list = Topic.objects.all().order_by('id')[:10]
+            self.student_name = request.user.get_username()
+            return render(request, 'myapp/index.html', {'top_list': self.top_list, 'student_name': self.student_name})
+        else:
+            http_response = HttpResponse()
+            http_response.write('<html> Your last login was more than one hour ago. </html>')
+            return http_response
+
+
+
+# def index(request):
+#     if request.session.get('last_login'):
+#         top_list = Topic.objects.all().order_by('id')[:10]
+#         student_name = request.user.get_username()
+#         return render(request, 'myapp/index.html', {'top_list': top_list, 'student_name': student_name})
+#     else:
+#         http_response = HttpResponse()
+#         http_response.write('<html> Your last login was more than one hour ago. </html>')
+#         return http_response
 
 
 def about(request):
@@ -35,15 +48,25 @@ def about(request):
         about_visits = request.session['about_visits']
     return render(request, 'myapp/about.html', {'student_name': student_name, 'about_visits': about_visits})
 
+class Detail(View):
+     def get(self, request, *args, **kwargs):
+        self.student_name = request.user.get_username()
+        self.topic_local = get_object_or_404(Topic, pk=kwargs['topic_id'])
+        self.courses = Course.objects.filter(topic=kwargs['topic_id'])
+        self.topic_name = self.topic_local.name.upper()
+        self.topic_length = str(self.topic_local.length) + ' weeks'
+        return render(request, 'myapp/detail.html',
+                    {'topic_name': self.topic_name, 'topic_length': self.topic_length, 'courses': self.courses, 'student_name': self.student_name})
 
-def detail(request, topic_id):
-    student_name = request.user.get_username()
-    topic_local = get_object_or_404(Topic, pk=topic_id)
-    courses = Course.objects.filter(topic=topic_id)
-    topic_name = topic_local.name.upper()
-    topic_length = str(topic_local.length) + ' weeks'
-    return render(request, 'myapp/detail.html',
-                  {'topic_name': topic_name, 'topic_length': topic_length, 'courses': courses, 'student_name': student_name})
+
+# def detail(request, topic_id):
+#     student_name = request.user.get_username()
+#     topic_local = get_object_or_404(Topic, pk=topic_id)
+#     courses = Course.objects.filter(topic=topic_id)
+#     topic_name = topic_local.name.upper()
+#     topic_length = str(topic_local.length) + ' weeks'
+#     return render(request, 'myapp/detail.html',
+#                   {'topic_name': topic_name, 'topic_length': topic_length, 'courses': courses, 'student_name': student_name})
 
 
 def findcourses(request):
@@ -99,33 +122,38 @@ def place_order(request):
     else:
         form = OrderForm()
         return render(request, 'myapp/place_order.html', {'form': form, 'student_name': student_name})
-
+@login_required
 def review(request):
     student_name = request.user.get_username()
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            rating = form.cleaned_data['rating']
-            if 5 >= rating >= 1:
-                course = form.cleaned_data['course']
-                c = Course.objects.get(title=course.title)
-                c.num_reviews += 1
-                c.save()
-                f = form.save()
-                f.save()
-                top_list = Topic.objects.all().order_by('id')[:10]
-                return render(request, 'myapp/index.html', {'top_list': top_list, 'student_name': student_name})
+    student = Student.objects.get(username=student_name)
+    student_type = student.level
+    if(student_type == 'UG' or student_type =='PG'):
+        if request.method == 'POST':
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                rating = form.cleaned_data['rating']
+                if 5 >= rating >= 1:
+                    course = form.cleaned_data['course']
+                    c = Course.objects.get(title=course.title)
+                    c.num_reviews += 1
+                    c.save()
+                    f = form.save()
+                    f.save()
+                    top_list = Topic.objects.all().order_by('id')[:10]
+                    return render(request, 'myapp/index.html', {'top_list': top_list, 'student_name': student_name})
+                else:
+                    form = ReviewForm()
+                    message = 'You must enter a rating between 1 and 5!'
+                    return render(request, 'myapp/review.html',
+                                {'form': form, 'student_name': student_name, 'message': message})
             else:
                 form = ReviewForm()
-                message = 'You must enter a rating between 1 and 5!'
-                return render(request, 'myapp/review.html',
-                              {'form': form, 'student_name': student_name, 'message': message})
+                return render(request, 'myapp/review.html', {'form': form, 'student_name': student_name})
         else:
             form = ReviewForm()
             return render(request, 'myapp/review.html', {'form': form, 'student_name': student_name})
     else:
-        form = ReviewForm()
-        return render(request, 'myapp/review.html', {'form': form, 'student_name': student_name})
+        return render(request, 'myapp/error.html',{'msg':"User not authorized to review. Must be UG or PG student."})
 
 
 def user_login(request):
@@ -214,9 +242,7 @@ def register(request):
             level = form.cleaned_data['level']
             address = form.cleaned_data['address']
             province = form.cleaned_data['province']
-            registered_courses = form.cleaned_data['registered_courses']
-            print (request.FILES)
-            
+            registered_courses = form.cleaned_data['registered_courses']            
             form.photo = request.FILES['photo']
             form.save()
             user = User.objects.get(username=username)

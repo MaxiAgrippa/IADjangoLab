@@ -2,6 +2,8 @@
 {% load static %}
 <html>
 <head>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'myapp/style.css' %}"
     />
     <title>E-Learning WebApp - {% block title %}Welcome!{% endblock %}</title>
@@ -18,15 +20,15 @@
         <li class="hbar1"><a href="{% url 'myapp:index' %}">Click here to return to main page</a></li>
         <li class="hbar1"><a href="{% url 'myapp:findcourses' %}">Search of a course</a></li>
         <li class="hbar1"><a href="{% url 'myapp:place_order' %}">Place an order</a></li>
-        <li class="hbar1"><a href="{% url 'myapp:review' %}">Review</a><br/></li>
+        <li class="hbar1"><a href="{% url 'myapp:review' %}">Review</a></li>
         
         {% if student_name %}
-            <li class="hbar1"><a href="{% url 'myapp:myorder' %}">My Order</a><br/></li>
-            <li class="hbar1"><a href="{% url 'myapp:myaccount' %}">My Account</a><br/></li>
-            <li class="hbar1"><a href="{% url 'myapp:user_logout' %}">Logout</a><br/></li>
+            <li class="hbar1"><a href="{% url 'myapp:myorder' %}">My Order</a></li>
+            <li class="hbar1"><a href="{% url 'myapp:myaccount' %}">My Account</a></li>
+            <li class="hbar1"><a href="{% url 'myapp:user_logout' %}">Logout</a></li>
         {% else %}
-        <li class="hbar1"><a href="{% url 'myapp:register' %}">Register</a><br/></li>
-        <li class="hbar1"><a href="{% url 'myapp:user_login' %}">Login</a><br/></li>
+        <li class="hbar1"><a href="{% url 'myapp:register' %}">Register</a></li>
+        <li class="hbar1"><a href="{% url 'myapp:user_login' %}">Login</a></li>
         {% endif %}
     </ul>
 </div>

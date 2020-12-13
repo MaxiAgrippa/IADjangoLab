@@ -48,8 +48,4 @@ class StudentRegisterForm(forms.ModelForm):
     province = forms.CharField(label='Province', max_length=2, empty_value='ON')
     registered_courses = forms.ModelMultipleChoiceField(label='Registered Courses', required=False,
                                                         queryset=Course.objects.all())
-    #photo = forms.ImageField(label='Profile Image', required= False)
-    
-    #fields =  ['username', 'email', 'password','interested_in', 'first_name', 'last_name','level', 'address','province','registered_courses','photo']
-
     field_order = ['username', 'email', 'password','interested_in', 'first_name', 'last_name','level', 'address','province','registered_courses','photo']
